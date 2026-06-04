@@ -79,8 +79,7 @@
         border-bottom: 1px solid var(--line);
       }
 
-      .search,
-      .button {
+      .search {
         width: 100%;
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -88,17 +87,9 @@
         color: var(--text);
         font: inherit;
         min-height: 42px;
-      }
-
-      .search {
         padding: 0 12px;
       }
 
-      .button {
-        cursor: pointer;
-      }
-
-      .button:hover,
       .channel:hover,
       .channel.active {
         border-color: var(--accent);
@@ -233,7 +224,6 @@
         </div>
         <div class="toolbar">
           <input id="search" class="search" type="search" placeholder="Search channels" />
-          <button id="reload" class="button" type="button">Reload playlist</button>
         </div>
         <div id="channels" class="channels"></div>
       </aside>
@@ -252,10 +242,10 @@
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.7/dist/hls.min.js"></script>
     <script>
       const playlistUrl = "playlist.m3u8";
+      const playlistRefreshMs = 5 * 60 * 1000;
       const channelsEl = document.querySelector("#channels");
       const countEl = document.querySelector("#channel-count");
       const searchEl = document.querySelector("#search");
-      const reloadEl = document.querySelector("#reload");
       const videoEl = document.querySelector("#video");
       const titleEl = document.querySelector("#current-title");
       const statusEl = document.querySelector("#status");
@@ -265,12 +255,14 @@
       let hls;
 
       loadPlaylist();
+      setInterval(() => loadPlaylist({ silent: true }), playlistRefreshMs);
 
-      reloadEl.addEventListener("click", loadPlaylist);
       searchEl.addEventListener("input", renderChannels);
 
-      async function loadPlaylist() {
-        setStatus("Loading playlist...");
+      async function loadPlaylist(options = {}) {
+        if (!options.silent) {
+          setStatus("Loading playlist...");
+        }
 
         try {
           const response = await fetch(`${playlistUrl}?t=${Date.now()}`, { cache: "no-store" });
@@ -283,12 +275,20 @@
           channels = parseM3u(text);
           countEl.textContent = `${channels.length} channels`;
           renderChannels();
-          setStatus("Playlist loaded. Select a channel to start playback.");
+          if (!activeUrl) {
+            setStatus("Playlist loaded. Select a channel to start playback.");
+          } else if (!channels.some((channel) => channel.url === activeUrl)) {
+            activeUrl = "";
+            titleEl.textContent = "Select a channel";
+            setStatus("Playlist refreshed. Select a channel to start playback.");
+          }
         } catch (error) {
-          channels = [];
-          countEl.textContent = "Playlist unavailable";
-          renderChannels();
-          setStatus(error.message, true);
+          if (!options.silent) {
+            channels = [];
+            countEl.textContent = "Playlist unavailable";
+            renderChannels();
+            setStatus(error.message, true);
+          }
         }
       }
 
