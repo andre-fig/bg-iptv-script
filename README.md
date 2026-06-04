@@ -2,6 +2,14 @@
 
 Curated IPTV playlist for watching Bulgarian television channels through any compatible IPTV player.
 
+## Web Player
+
+The project also publishes a browser-based player through GitHub Pages:
+
+```text
+https://andre-fig.github.io/bg-iptv/
+```
+
 ## Playlist URL
 
 Use this URL in your IPTV player:
