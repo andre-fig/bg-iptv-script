@@ -233,8 +233,8 @@
           <video id="video" controls playsinline></video>
         </div>
         <section class="details">
-          <h2 id="current-title">Select a channel</h2>
-          <p id="status" class="status">Choose a channel from the list to start playback.</p>
+          <h2 id="current-title">Loading first channel</h2>
+          <p id="status" class="status">Loading playlist...</p>
         </section>
       </main>
     </div>
@@ -275,12 +275,13 @@
           channels = parseM3u(text);
           countEl.textContent = `${channels.length} channels`;
           renderChannels();
-          if (!activeUrl) {
-            setStatus("Playlist loaded. Select a channel to start playback.");
+          if (!activeUrl && channels.length) {
+            playChannel(channels[0]);
           } else if (!channels.some((channel) => channel.url === activeUrl)) {
             activeUrl = "";
-            titleEl.textContent = "Select a channel";
-            setStatus("Playlist refreshed. Select a channel to start playback.");
+            if (channels.length) {
+              playChannel(channels[0]);
+            }
           }
         } catch (error) {
           if (!options.silent) {
