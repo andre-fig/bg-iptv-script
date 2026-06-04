@@ -42,21 +42,24 @@ if (!token) {
 }
 
 const root = resolve(import.meta.dirname, "..");
-const result = spawnSync(
-  process.execPath,
-  ["scripts/generate-playlist.mjs", "--output", "playlist.m3u"],
-  {
-    cwd: root,
-    env: {
-      ...process.env,
-      ELEMENTAL_TOKEN: token,
-    },
-    stdio: "inherit",
-  },
-);
 
-if (result.status !== 0) {
-  throw new Error(`Playlist generation failed with exit code ${result.status}.`);
+for (const output of ["playlist.m3u", "playlist.m3u8"]) {
+  const result = spawnSync(
+    process.execPath,
+    ["scripts/generate-playlist.mjs", "--output", output],
+    {
+      cwd: root,
+      env: {
+        ...process.env,
+        ELEMENTAL_TOKEN: token,
+      },
+      stdio: "inherit",
+    },
+  );
+
+  if (result.status !== 0) {
+    throw new Error(`Playlist generation failed for ${output} with exit code ${result.status}.`);
+  }
 }
 
 function redact(value) {
