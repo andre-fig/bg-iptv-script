@@ -8,7 +8,7 @@ const channelsPath = resolve(root, "channels.json");
 const templateMode = args.has("--template");
 const outputPath = resolve(
   root,
-  String(args.get("--output") || (templateMode ? "playlist.m3u8" : "playlist.local.m3u8")),
+  String(args.get("--output") || (templateMode ? "playlist.m3u" : "playlist.local.m3u")),
 );
 
 const token = String(args.get("--token") || process.env.ELEMENTAL_TOKEN || "")
@@ -16,6 +16,7 @@ const token = String(args.get("--token") || process.env.ELEMENTAL_TOKEN || "")
   .replace(/^t\./, "");
 const preferredProfileId = Number(args.get("--profile") || process.env.ELEMENTAL_PROFILE_ID || 3);
 const includeAdult = process.env.INCLUDE_ADULT === "1" || args.has("--include-adult");
+const includeVlcOptions = args.has("--vlc-options") || process.env.INCLUDE_VLC_OPTIONS === "1";
 const tokenValue = templateMode ? "__ELEMENTAL_TOKEN__" : token;
 
 if (!templateMode && !tokenValue) {
@@ -45,11 +46,13 @@ for (const channel of channels) {
   const begin = channel.currentepg?.start || Math.floor(Date.now() / 1000);
   const url = `https://play.elemental.tv/v1/playlists/${encodeURIComponent(channel.id)}/t.${encodeURIComponent(tokenValue)}/${profile.id}.m3u8?begin=${begin}`;
 
-  lines.push(
-    `#EXTINF:-1 tvg-id="${escapeM3uAttr(channel.id)}" tvg-name="${escapeM3uAttr(channel.name)}" tvg-logo="${escapeM3uAttr(logo)}" group-title="${escapeM3uAttr(group)}",${channel.name}`,
-    "#EXTVLCOPT:http-referrer=https://play.elemental.tv/channels",
-    url,
-  );
+  lines.push(`#EXTINF:-1 tvg-id="${escapeM3uAttr(channel.id)}" tvg-name="${escapeM3uAttr(channel.name)}" tvg-logo="${escapeM3uAttr(logo)}" group-title="${escapeM3uAttr(group)}",${channel.name}`);
+
+  if (includeVlcOptions) {
+    lines.push("#EXTVLCOPT:http-referrer=https://play.elemental.tv/channels");
+  }
+
+  lines.push(url);
 }
 
 writeFileSync(outputPath, `${lines.join("\n")}\n`);

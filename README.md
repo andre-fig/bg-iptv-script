@@ -5,7 +5,8 @@ Gerador de playlist IPTV a partir do arquivo `channels.json`.
 ## Arquivos
 
 - `channels.json`: lista de canais exportada do site.
-- `playlist.m3u8`: playlist publicada. No template local ela usa `__ELEMENTAL_TOKEN__`; no GitHub Actions ela pode ser atualizada com token real.
+- `playlist.m3u`: playlist IPTV publicada. No template local ela usa `__ELEMENTAL_TOKEN__`; no GitHub Actions ela pode ser atualizada com token real.
+- `playlist.m3u8`: legado do primeiro formato. Prefira `playlist.m3u` para apps IPTV.
 - `playlist.local.m3u8`: playlist funcional gerada localmente, ignorada pelo Git.
 
 ## Gerar template versionavel
@@ -41,6 +42,12 @@ Configure estes secrets no repositorio:
 - `ELEMENTAL_EMAIL`
 - `ELEMENTAL_PASSWORD`
 
-Depois disso, o workflow faz login em `https://play.elemental.tv/v1/users/login`, pega `data.access_token`, gera `playlist.m3u8` e commita a mudanca se houver diff.
+Depois disso, o workflow faz login em `https://play.elemental.tv/v1/users/login`, pega `data.access_token`, gera `playlist.m3u` e commita a mudanca se houver diff.
 
-Observacao: o e-mail e a senha ficam protegidos nos GitHub Secrets. O token gerado fica dentro do `playlist.m3u8`, entao qualquer pessoa com acesso ao repositorio tambem tera acesso ao token enquanto ele estiver valido.
+URL recomendada para players IPTV:
+
+```text
+https://raw.githubusercontent.com/andre-fig/bg-iptv/main/playlist.m3u
+```
+
+Observacao: o e-mail e a senha ficam protegidos nos GitHub Secrets. O token gerado fica dentro do `playlist.m3u`, entao qualquer pessoa com acesso ao repositorio tambem tera acesso ao token enquanto ele estiver valido.

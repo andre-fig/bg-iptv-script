@@ -44,7 +44,7 @@ if (!token) {
 const root = resolve(import.meta.dirname, "..");
 const result = spawnSync(
   process.execPath,
-  ["scripts/generate-playlist.mjs", "--output", "playlist.m3u8"],
+  ["scripts/generate-playlist.mjs", "--output", "playlist.m3u"],
   {
     cwd: root,
     env: {

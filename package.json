@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "generate": "node scripts/generate-playlist.mjs",
-    "generate:template": "node scripts/generate-playlist.mjs --template --output playlist.m3u8",
+    "generate:template": "node scripts/generate-playlist.mjs --template --output playlist.m3u",
     "update": "node scripts/login-and-generate.mjs"
   }
 }
