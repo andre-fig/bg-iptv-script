@@ -1,4 +1,4 @@
-# bg-iptv
+# BG IPTV
 
 Curated IPTV playlist for watching Bulgarian television channels through any compatible IPTV player.
 
