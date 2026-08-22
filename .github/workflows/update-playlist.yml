@@ -3,10 +3,14 @@ name: Update playlist
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 5 * * *"
+    - cron: "15 5 * * 0"
 
 permissions:
   contents: write
+
+concurrency:
+  group: update-playlist
+  cancel-in-progress: true
 
 jobs:
   update-playlist:
